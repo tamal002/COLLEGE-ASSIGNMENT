@@ -22,7 +22,7 @@ class A2_Q7{
         str = trimLeadingSpaces(str);
         if(str.length() == 0) return 0;
         int count = 0;
-        for(int i = 0; i < str.length() - 2; i++){
+        for(int i = 0; i < str.length(); i++){
             if(str.charAt(i) == 'a' || str.charAt(i) == 'A') count++;
         }
         return count;
@@ -120,7 +120,7 @@ class A2_Q7{
         str = input.nextLine();
 
         System.out.println("total appearence of 'a' in the string: " + number_of_a(str));
-        System.out.println("total appearence of 'a' in the string: " + number_of_and(str));
+        System.out.println("total appearence of 'and' in the string: " + number_of_and(str));
         System.out.println("string start with the or The: " + start_with_the(str));
         System.out.print("containerizing the string and printing the container: ");
         ArrayList <Character> list = contsinerize(str);

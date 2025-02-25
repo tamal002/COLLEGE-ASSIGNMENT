@@ -185,11 +185,11 @@ class Operator{
         System.out.println();
     }
 
-    void loanRequest(String id, String designation, double amount){
+    void loanRequest(String id, double amount){
         System.out.println();
 
         
-        if(designation == "n"){
+        if(id.charAt(0) == 'N'){
             if(normalAccList.size() == 0){ // NO ACCOUT IS CREATED YET.
                 System.out.println("NO NORMAL ACCOUNT IS LISTED YET.");
                 System.out.println();
@@ -202,7 +202,7 @@ class Operator{
             }
             else{
                 for(NormalAccount i : normalAccList){
-                    if(i.id == id){
+                    if(i.id.equals(id)){
                         if(i.loaned == true){
                             System.out.println("LOAN REQUEST ALREADY ACCEPTED.");
                             System.out.println();
@@ -235,7 +235,7 @@ class Operator{
                 }
                 else{
                     for(PrivilegedAccount i : privAccList){
-                        if(i.id == id){
+                        if(i.id.equals(id)){
                             if(i.loaned == true){
                                 System.out.println("LOAN REQUEST ALREADY ACCEPTED.");
                                 System.out.println();
@@ -326,11 +326,11 @@ public class A2_Q5{
                     System.out.print("Loan requesting for id: ");
                     String loanId = input.next();
                     input.nextLine();
-                    System.out.print("a/c designation: ");
-                    String designation = input.nextLine();
+                    
                     System.out.print("Loan amount: ");
                     double amount = input.nextDouble();
-                    obj.loanRequest(loanId, designation, amount);
+                    obj.loanRequest(loanId, amount);
+                    break;
                 
                 case 8:
                     System.out.println("Exiting the program...");
