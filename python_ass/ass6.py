@@ -34,7 +34,7 @@ def add_user(user_name, email, age, directory):
     if user_name in directory:
         raise InvalidUsername(user_name)
     if email.find("@gmail.com") == -1:
-        raise InvalidEmail(email)
+        raise InvalidEmail(email, user_name)
     if age < 0:
         raise NegativeAge(age)
     if age < 16:
