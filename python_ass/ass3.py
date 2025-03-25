@@ -22,7 +22,8 @@
 #################################  USING ITERATOR #########################################
 
 nums = []
-for i in range(1, 11):
+n = int(input("calculate the Even-Odd sequence up to: "))
+for i in range(1, n+1):
     nums.append(i)
 
 it = iter(nums)
