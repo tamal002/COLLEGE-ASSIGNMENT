@@ -1,184 +1,157 @@
-
 from datetime import date
 
 # Bank_account
 class Bank_account:
-    def __init__(self, acc_no, customer_name, pin,  balance = 0):
+    def __init__(self, acc_no, customer_name, pin, balance=0):
         self.acc_no = acc_no
         self.customer_name = customer_name
-        self.acc_openning_date = date.today()
+        self.acc_opening_date = date.today()
         self.pin = pin
         self.balance = balance
         
-        
 # Savings_account
 class Savings_account(Bank_account):
-    def __init__(self, acc_no, customer_name, balance, pin,  interest_rate = 7.78):
-        self.interest_rate = interest_rate
+    def __init__(self, acc_no, customer_name, pin, balance, interest_rate=7.78):
         super().__init__(acc_no, customer_name, pin, balance)
+        self.interest_rate = interest_rate
         
 # Fee_savings_account 
 class Fee_savings_account(Bank_account):
-    def __init__(self, acc_no, customer_name, balance, pin):
-        self.fee = 4.78
+    def __init__(self, acc_no, customer_name, pin, balance):
         super().__init__(acc_no, customer_name, pin, balance)
+        self.fee = 4.78
         
-        
-# SYSTEM OPERATROR
+# SYSTEM OPERATOR
 class Operator:
     def __init__(self):
         self.savings_list = {}
         self.fee_savings_list = {}
 
-
-    def add_savings_user(self, acc_no, customer_name, pin,balance, int_rate):
-        customer = Savings_account(acc_no, customer_name, balance, pin)
+    def add_savings_user(self, acc_no, customer_name, pin, balance):
+        customer = Savings_account(acc_no, customer_name, pin, balance)
         self.savings_list[acc_no] = customer
-        print(f"{acc_no} is added successfully.")
+        print(f"Account {acc_no} added successfully.")
 
-    def add_fee_savings_user(self, acc_no, customer_name, pin,balance):
-        customer = Fee_savings_account(acc_no, customer_name, balance, pin)
+    def add_fee_savings_user(self, acc_no, customer_name, pin, balance):
+        customer = Fee_savings_account(acc_no, customer_name, pin, balance)
         self.fee_savings_list[acc_no] = customer
-        print(f"{acc_no} is added successfully.")
+        print(f"Account {acc_no} added successfully.")
 
-    
     def money_withdraw(self, acc_no, amount):
         if acc_no in self.savings_list:
-            name, pin, balance,  int_rate = self.savings_list[acc_no]
-            security = input("Enter your  4 digit pin: ")
-            if(security != pin):
-                print("you have enter wrong pin. TRY AGAIN LATER.")
-                return
-            if(balance < amount):
-                print(f"you current balance => INR{balance}, can't withdraw INR{amount}")
-                return
-            balance -= amount
-            self.savings_list[acc_no] = (name, balance, int_rate)
-            print(f"UPDATE [{acc_no}] : INR{amount} is debitted from your savings account.")
-        
+            account = self.savings_list[acc_no]
         elif acc_no in self.fee_savings_list:
-            name, pin, balance, fee = self.fee_savings_list[acc_no]
-            if(security != pin):
-                print("you have enter wrong pin. TRY AGAIN LATER.")
-                return
-            if(balance < amount):
-                print(f"you current balance => INR{balance}, can't withdraw INR{amount}")
-                return
-            balance -= amount + ((fee/100) * balance)
-            self.fee_savings_list[acc_no] = (name, pin, balance, fee)
-            print(f"UPDATE [{acc_no}] : INR{amount} is debitted from your savings account.")
+            account = self.fee_savings_list[acc_no]
+        else:
+            print(f"Account {acc_no} not found!")
+            return
+
+        security = input("Enter your 4-digit PIN: ")
+        if security != account.pin:
+            print("Incorrect PIN. Try again later.")
+            return
+
+        if account.balance < amount:
+            print(f"Insufficient balance: INR {account.balance}")
+            return
+
+        if isinstance(account, Fee_savings_account):
+            amount += (account.fee / 100) * amount  # Apply transaction fee
         
-        else:
-            print(f"{acc_no} not found !")
+        account.balance -= amount
+        print(f"UPDATE [{acc_no}]: INR {amount} withdrawn successfully.")
 
-
-    def money_deposite(self, acc_no, amount):
+    def money_deposit(self, acc_no, amount):
         if acc_no in self.savings_list:
-            name, pin, balance,  int_rate = self.savings_list[acc_no]
-            security = input("Enter your  4 digit pin: ")
-            if(security != pin):
-                print("you have enter wrong pin. TRY AGAIN LATER.")
-                return
-            balance += amount
-            self.savings_list[acc_no] = (name, pin, balance, int_rate)
-            print(f"UPDATE [{acc_no}] : INR{amount} deposited successfully.")
+            account = self.savings_list[acc_no]
         elif acc_no in self.fee_savings_list:
-            name, pin, balance, fee = self.fee_savings_list[acc_no]
-            security = input("Enter your  4 digit pin: ")
-            if(security != pin):
-                print("you have enter wrong pin. TRY AGAIN LATER.")
-                return
-            balance += amount
-            self.fee_savings_list[acc_no] = (name, pin, balance, fee)
-            print(f"UPDATE [{acc_no}] : INR{amount} deposited successfully.")
+            account = self.fee_savings_list[acc_no]
         else:
-            print(f"{acc_no} not found !")
+            print(f"Account {acc_no} not found!")
+            return
 
-    
-    def pin_cahnge(self, acc_no):
+        security = input("Enter your 4-digit PIN: ")
+        if security != account.pin:
+            print("Incorrect PIN. Try again later.")
+            return
+
+        account.balance += amount
+        print(f"UPDATE [{acc_no}]: INR {amount} deposited successfully.")
+
+    def pin_change(self, acc_no):
         if acc_no in self.savings_list:
-            name, pin, balance,  int_rate = self.savings_list[acc_no]
-            new_pin = input("Enter nre 4 digit pin: ")
-            self.savings_list[acc_no] = (name, pin, balance, int_rate)
-            print(f"UPDATE [{acc_no}] : pin changed successfully.")
-        elif acc_no in self.savings_list:
-            name, pin, balance,  fee = self.fee_savings_list[acc_no]
-            new_pin = input("Enter nre 4 digit pin: ")
-            self.fee_savings_list[acc_no] = (name, pin, balance, fee)
-            print(f"UPDATE [{acc_no}] : pin changed successfully.")
+            account = self.savings_list[acc_no]
+        elif acc_no in self.fee_savings_list:
+            account = self.fee_savings_list[acc_no]
         else:
-            print(f"{acc_no} not found.")
+            print(f"Account {acc_no} not found!")
+            return
+
+        new_pin = input("Enter new 4-digit PIN: ")
+        account.pin = new_pin
+        print(f"UPDATE [{acc_no}]: PIN changed successfully.")
 
     def show_all_details(self):
-        if(len(self.savings_list) == 0):
-            print("NO SAVINGS_ACCOUNT LISTED YET.")
+        if not self.savings_list:
+            print("No savings accounts listed yet.")
         else:
-            print("SAVINGS_ACCOUNTS ARE LISTED BELOW.")
-            print(self.savings_list)
+            print("SAVINGS ACCOUNTS:")
+            for acc in self.savings_list.values():
+                print(f"Account No: {acc.acc_no}, Name: {acc.customer_name}, Balance: INR {acc.balance}")
 
-        if(len(self.fee_savings_list) == 0):
-            print("NO FEE_SAVINGS_ACCOUNT LISTED YET.")
+        if not self.fee_savings_list:
+            print("No fee savings accounts listed yet.")
         else:
-            print("FEE_SAVINGS_ACCOUNTS ARE LISTED BELOW.")
-            print(self.fee_savings_list)
-
+            print("FEE SAVINGS ACCOUNTS:")
+            for acc in self.fee_savings_list.values():
+                print(f"Account No: {acc.acc_no}, Name: {acc.customer_name}, Balance: INR {acc.balance}")
 
 def switch_case(option, operator):
-
     if option == 1:
-        acc_no1 = input("Enter saving_account account no: ")
-        name1 = input("Enter saving_account customer name: ")
-        pin1 = input("Create a 4 digit pin: ")
-        balance1 = float(input("Enter the openning balance: "))
-        operator.add_savings_user(acc_no1, name1, pin1, balance1)
+        acc_no = input("Enter saving account number: ")
+        name = input("Enter customer name: ")
+        pin = input("Create a 4-digit PIN: ")
+        balance = float(input("Enter opening balance: "))
+        operator.add_savings_user(acc_no, name, pin, balance)
 
     elif option == 2:
-        acc_no2 = input("Enter fee_saving_account account no: ")
-        name2 = input("Enter fee_saving_account custo2mer name: ")
-        pin2 = input("Create a 4 digit pin: ")
-        balance2 = float(input("Enter the openning balance: "))
-        operator.add_fee_savings_user(acc_no2, name2, pin2,balance2)
-    
+        acc_no = input("Enter fee saving account number: ")
+        name = input("Enter customer name: ")
+        pin = input("Create a 4-digit PIN: ")
+        balance = float(input("Enter opening balance: "))
+        operator.add_fee_savings_user(acc_no, name, pin, balance)
+
     elif option == 3:
-        acc_no3 = input("Enter Account_number: ")
-        amount3 = float(input("Enter the amount to deposite: "))
-        operator.money_deposite(acc_no3, amount3)
+        acc_no = input("Enter account number: ")
+        amount = float(input("Enter deposit amount: "))
+        operator.money_deposit(acc_no, amount)
 
     elif option == 4:
-        acc_no4 = input("Enter Account_number: ")
-        amount4 = float(input("Enter the amount to withdraw: "))
-        money_withdraw(acc_no, amount)
+        acc_no = input("Enter account number: ")
+        amount = float(input("Enter withdrawal amount: "))
+        operator.money_withdraw(acc_no, amount)
 
     elif option == 5:
-        acc_no5 = input("Enter Account_number: ")
-        pin_cahnge(acc_no5)
+        acc_no = input("Enter account number: ")
+        operator.pin_change(acc_no)
 
     elif option == 6:
         operator.show_all_details()
 
-
-
-
-
 # MAIN
 operator = Operator()
 while True:
-    print("press 1 to add SAVINGS_ACCOUNT.")
-    print("press 2 to add FEE_SAVINGS_ACCOUNT.")
-    print("press 3 to DEPOSITE MONEY.")
-    print("press 4 to WITHDRAW MONEY..")
-    print("press 5 to CHANGE THE PIN.")
-    print("press 6 to see the all account details.")
-    print("press 7 to end the session.")
+    print("\nMenu:")
+    print("1 - Add Savings Account")
+    print("2 - Add Fee Savings Account")
+    print("3 - Deposit Money")
+    print("4 - Withdraw Money")
+    print("5 - Change PIN")
+    print("6 - Show All Account Details")
+    print("7 - Exit")
+    
     option = int(input("Enter your choice: "))
-    if option == 7 or option < 1:
-        print("ENDING THE SESSION.")
-    
-    else:
-        switch_case(option, operator)
-
-    
-                
-    
-        
-    
+    if option == 7:
+        print("Ending the session.")
+        break
+    switch_case(option, operator)
